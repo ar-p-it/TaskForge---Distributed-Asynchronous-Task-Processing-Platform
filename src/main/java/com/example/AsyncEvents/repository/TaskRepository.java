@@ -1,10 +1,12 @@
-package com.example.AsyncEvents.repository;
+package com.example.asyncevents.repository;
 
-import com.example.AsyncEvents.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.asyncevents.entity.Task;
 
 import java.util.UUID;
 
 public interface TaskRepository
         extends JpaRepository<Task, UUID> {
 }
+

@@ -1,4 +1,4 @@
-package com.example.AsyncEvents;
+package com.example.asyncevents;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

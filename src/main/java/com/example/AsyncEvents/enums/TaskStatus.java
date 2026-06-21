@@ -1,4 +1,4 @@
-package com.example.AsyncEvents.enums;
+package com.example.asyncevents.enums;
 
 public enum TaskStatus {
     PENDING,

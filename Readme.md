@@ -202,3 +202,37 @@ This project demonstrates:
 * Retry and Recovery Mechanisms
 * Database Design
 * Scalability Patterns
+
+
+
+
+
+
+                Client
+                   │
+                   ▼
+            Task Service
+                   │
+                   ▼
+              PostgreSQL
+                   │
+                   ▼
+                 Kafka
+      ┌────────────┼────────────┐
+      ▼            ▼            ▼
+ Notification   Data Proc    API Worker
+    Worker       Worker
+      │            │            │
+      ▼            ▼            ▼
+   Email        Reports      GitHub
+   SMS          Analytics    OpenAI
+
+                   │
+                   ▼
+                 Redis
+            (Rate Limits)
+
+                   │
+                   ▼
+              Kubernetes
+               (Scaling)

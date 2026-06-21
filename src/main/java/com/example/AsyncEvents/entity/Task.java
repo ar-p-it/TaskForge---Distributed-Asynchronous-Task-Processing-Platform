@@ -1,12 +1,13 @@
-package com.example.AsyncEvents.entity;
+package com.example.asyncevents.entity;
 
-import com.example.AsyncEvents.enums.TaskStatus;
-import com.example.AsyncEvents.enums.TaskType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.example.asyncevents.enums.TaskStatus;
+import com.example.asyncevents.enums.TaskType;
 
 @Entity
 @Getter
