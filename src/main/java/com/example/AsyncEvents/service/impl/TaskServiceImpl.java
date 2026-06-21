@@ -11,11 +11,19 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+
+// day 2 
+import com.example.asyncevents.event.TaskCreatedEvent;
+import com.example.asyncevents.producer.TaskProducer;
+
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
+    // private final TaskRepository taskRepository;
+    // day 2chnages
     private final TaskRepository taskRepository;
+private final TaskProducer taskProducer;
 
     @Override
     public TaskResponse createTask(CreateTaskRequest request) {
@@ -29,12 +37,24 @@ public class TaskServiceImpl implements TaskService {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
+        // Task savedTask = taskRepository.save(task);
+
+        // return TaskResponse.builder()
+        //         .id(savedTask.getId())
+        //         .type(savedTask.getType())
+        //         .status(savedTask.getStatus())
+        //         .build();
+        // day 2
         Task savedTask = taskRepository.save(task);
 
-        return TaskResponse.builder()
-                .id(savedTask.getId())
-                .type(savedTask.getType())
-                .status(savedTask.getStatus())
-                .build();
+taskProducer.publishTaskCreated(
+        new TaskCreatedEvent(savedTask.getId())
+);
+
+return TaskResponse.builder()
+        .id(savedTask.getId())
+        .type(savedTask.getType())
+        .status(savedTask.getStatus())
+        .build();
     }
 }
