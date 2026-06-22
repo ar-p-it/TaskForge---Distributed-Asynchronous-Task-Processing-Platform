@@ -20,8 +20,7 @@ public class TaskConsumer {
             topics = "task-created-topic",
             groupId = "task-group"
     )
-    public void consume(TaskCreatedEvent event)
-            throws InterruptedException {
+    public void consume(TaskCreatedEvent event) {
 
         log.info(
                 "Received task event: {}",
@@ -32,25 +31,47 @@ public class TaskConsumer {
                 .findById(event.taskId())
                 .orElseThrow();
 
-        // PENDING -> PROCESSING
-        task.setStatus(TaskStatus.PROCESSING);
-        taskRepository.save(task);
+        try {
 
-        log.info(
-                "Task {} is PROCESSING",
-                task.getId()
-        );
+            // PENDING -> PROCESSING
+            task.setStatus(TaskStatus.PROCESSING);
+            taskRepository.save(task);
 
-        // Simulate work
-        Thread.sleep(5000);
+            log.info(
+                    "Task {} is PROCESSING",
+                    task.getId()
+            );
 
-        // PROCESSING -> COMPLETED
-        task.setStatus(TaskStatus.COMPLETED);
-        taskRepository.save(task);
+            // // Simulate failure
+            // !This was for testing purposes of what if ur code base fails and how to handle it 
+            // throw new RuntimeException(
+            //         "Simulated Failure"
+            // );
+Thread.sleep(5000);
 
-        log.info(
-                "Task {} COMPLETED",
-                task.getId()
-        );
+task.setStatus(TaskStatus.COMPLETED);
+taskRepository.save(task);
+log.info(
+        "Task {} COMPLETED",
+        task.getId()
+);
+
+
+        } catch (Exception e) {
+
+            task.setRetryCount(
+                    task.getRetryCount() + 1
+            );
+
+            task.setStatus(TaskStatus.FAILED);
+
+            taskRepository.save(task);
+
+            log.error(
+                    "Task {} failed",
+                    task.getId(),
+                    e
+            );
+        }
     }
 }
