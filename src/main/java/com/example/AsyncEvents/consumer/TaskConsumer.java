@@ -3,6 +3,8 @@ package com.example.asyncevents.consumer;
 import com.example.asyncevents.entity.Task;
 import com.example.asyncevents.enums.TaskStatus;
 import com.example.asyncevents.event.TaskCreatedEvent;
+import com.example.asyncevents.handler.TaskHandler;
+import com.example.asyncevents.handler.TaskHandlerFactory;
 import com.example.asyncevents.producer.DlqProducer;
 import com.example.asyncevents.producer.TaskProducer;
 import com.example.asyncevents.repository.TaskRepository;
@@ -22,16 +24,26 @@ public class TaskConsumer {
         // Day 7
         private final DlqProducer dlqProducer;
 
+        private final TaskHandlerFactory taskHandlerFactory;
+
         @KafkaListener(topics = "task-created-topic", groupId = "task-group")
         public void consume(TaskCreatedEvent event) {
 
                 log.info(
                                 "Received task event: {}",
                                 event.taskId());
-
                 Task task = taskRepository
                                 .findById(event.taskId())
-                                .orElseThrow();
+                                .orElse(null);
+
+                if (task == null) {
+
+                        log.error(
+                                        "Task {} not found",
+                                        event.taskId());
+
+                        return;
+                }
 
                 try {
 
@@ -46,15 +58,20 @@ public class TaskConsumer {
                         // // Simulate failure
                         // !This was for testing purposes of what if ur code base fails and how to
                         // handle it
-                        throw new RuntimeException(
-                                        "Simulated Failure");
+                        // throw new RuntimeException(
+                        // "Simulated Failure");
+
+                        TaskHandler handler = taskHandlerFactory.getHandler(
+                                        task.getType());
+
+                        handler.process(task);
                         // Thread.sleep(5000);
 
-                        // task.setStatus(TaskStatus.COMPLETED);
-                        // taskRepository.save(task);
-                        // log.info(
-                        // "Task {} COMPLETED",
-                        // task.getId());
+                        task.setStatus(TaskStatus.COMPLETED);
+                        taskRepository.save(task);
+                        log.info(
+                        "Task {} COMPLETED",
+                        task.getId());
 
                 } catch (Exception e) {
 
