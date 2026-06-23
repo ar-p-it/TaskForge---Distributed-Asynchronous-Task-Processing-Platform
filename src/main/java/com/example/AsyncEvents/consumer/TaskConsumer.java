@@ -3,6 +3,7 @@ package com.example.asyncevents.consumer;
 import com.example.asyncevents.entity.Task;
 import com.example.asyncevents.enums.TaskStatus;
 import com.example.asyncevents.event.TaskCreatedEvent;
+import com.example.asyncevents.producer.DlqProducer;
 import com.example.asyncevents.producer.TaskProducer;
 import com.example.asyncevents.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,9 @@ public class TaskConsumer {
 
         private final TaskRepository taskRepository;
         private final TaskProducer taskProducer;
+
+        // Day 7
+        private final DlqProducer dlqProducer;
 
         @KafkaListener(topics = "task-created-topic", groupId = "task-group")
         public void consume(TaskCreatedEvent event) {
@@ -83,6 +87,15 @@ public class TaskConsumer {
                                                 new TaskCreatedEvent(
                                                                 task.getId()));
 
+                        } else {
+
+                                dlqProducer.publishToDlq(
+                                                new TaskCreatedEvent(
+                                                                task.getId()));
+
+                                log.error(
+                                                "Task {} moved to DLQ",
+                                                task.getId());
                         }
                         log.error(
                                         "Task {} failed",
