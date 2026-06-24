@@ -2,14 +2,16 @@ package com.example.asyncevents.handler;
 
 import com.example.asyncevents.entity.Task;
 import com.example.asyncevents.enums.TaskType;
-
-import lombok.extern.slf4j.Slf4j;
+import com.example.asyncevents.service.DataProcessingService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
-public class DataProcessingHandler
-        implements TaskHandler {
+@RequiredArgsConstructor
+public class DataProcessingHandler implements TaskHandler {
+
+    private final DataProcessingService dataProcessingService;
+
     @Override
     public TaskType getTaskType() {
         return TaskType.DATA_PROCESSING;
@@ -18,8 +20,8 @@ public class DataProcessingHandler
     @Override
     public void process(Task task) {
 
-        log.info(
-                "Processing data task {}",
-                task.getId());
+        dataProcessingService.processData(
+                task.getPayload()
+        );
     }
 }

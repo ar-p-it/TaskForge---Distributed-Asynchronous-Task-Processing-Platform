@@ -2,14 +2,15 @@ package com.example.asyncevents.handler;
 
 import com.example.asyncevents.entity.Task;
 import com.example.asyncevents.enums.TaskType;
-
-import lombok.extern.slf4j.Slf4j;
+import com.example.asyncevents.service.ThirdPartyApiService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
-public class ThirdPartyApiHandler
-        implements TaskHandler {
+@RequiredArgsConstructor
+public class ThirdPartyApiHandler implements TaskHandler {
+
+    private final ThirdPartyApiService thirdPartyApiService;
 
     @Override
     public TaskType getTaskType() {
@@ -19,8 +20,8 @@ public class ThirdPartyApiHandler
     @Override
     public void process(Task task) {
 
-        log.info(
-                "Calling third party API for task {}",
-                task.getId());
+        thirdPartyApiService.callApi(
+                task.getPayload()
+        );
     }
 }
