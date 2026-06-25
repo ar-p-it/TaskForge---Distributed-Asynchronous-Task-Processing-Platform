@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 // day 2 
 import com.example.asyncevents.event.TaskCreatedEvent;
 import com.example.asyncevents.producer.TaskProducer;
-
+import com.example.asyncevents.dto.response.TaskStatsResponse;
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
@@ -57,4 +57,28 @@ return TaskResponse.builder()
         .status(savedTask.getStatus())
         .build();
     }
+
+@Override
+public TaskStatsResponse getTaskStats() {
+
+    long pending = taskRepository.countByStatus(
+            TaskStatus.PENDING);
+
+    long processing = taskRepository.countByStatus(
+            TaskStatus.PROCESSING);
+
+    long completed = taskRepository.countByStatus(
+            TaskStatus.COMPLETED);
+
+    long failed = taskRepository.countByStatus(
+            TaskStatus.FAILED);
+
+    return new TaskStatsResponse(
+            pending,
+            processing,
+            completed,
+            failed
+    );
+}
+
 }

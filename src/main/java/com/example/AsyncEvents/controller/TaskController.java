@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.asyncevents.dto.response.TaskStatsResponse;
 @RestController
 @RequestMapping("/api/v1/tasks")
 @RequiredArgsConstructor
@@ -26,4 +26,11 @@ public class TaskController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+    @GetMapping("/stats")
+public ResponseEntity<TaskStatsResponse> getTaskStats() {
+
+    return ResponseEntity.ok(
+            taskService.getTaskStats()
+    );
+}
 }
