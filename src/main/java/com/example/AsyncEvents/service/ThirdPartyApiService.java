@@ -11,18 +11,19 @@ public class ThirdPartyApiService {
 
         log.info(
                 "Calling external API with payload: {}",
-                payload
-        );
-
+                payload);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         if (payload.equalsIgnoreCase("fail")) {
 
             throw new RuntimeException(
-                    "Third Party API Failed"
-            );
+                    "Third Party API Failed");
         }
 
         log.info(
-                "Third Party API Success"
-        );
+                "Third Party API Success");
     }
 }

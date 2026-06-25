@@ -11,7 +11,16 @@ public class DataProcessingService {
 
         log.info(
                 "Processing data: {}",
-                payload
-        );
+                payload);
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        log.info(
+                "Data processing completed: {}",
+                payload);
     }
 }

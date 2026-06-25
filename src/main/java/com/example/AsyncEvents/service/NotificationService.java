@@ -11,7 +11,16 @@ public class NotificationService {
 
         log.info(
                 "Sending notification: {}",
-                payload
-        );
+                payload);
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        log.info(
+                "Notification sent: {}",
+                payload);
+
     }
 }

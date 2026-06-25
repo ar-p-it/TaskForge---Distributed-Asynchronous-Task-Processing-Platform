@@ -29,8 +29,12 @@ public class TaskConsumer {
         @KafkaListener(topics = "task-created-topic", groupId = "task-group")
         public void consume(TaskCreatedEvent event) {
 
+                // log.info(
+                // "Received task event: {}",
+                // event.taskId());
                 log.info(
-                                "Received task event: {}",
+                                "Consumer [{}] received task {}",
+                                Thread.currentThread().getName(),
                                 event.taskId());
                 Task task = taskRepository
                                 .findById(event.taskId())
@@ -38,11 +42,15 @@ public class TaskConsumer {
 
                 if (task == null) {
 
+                        // log.error(
+                        // "Task {} not found",
+                        // event.taskId());
                         log.error(
                                         "Task {} not found",
                                         event.taskId());
 
                         return;
+
                 }
 
                 try {
@@ -70,8 +78,8 @@ public class TaskConsumer {
                         task.setStatus(TaskStatus.COMPLETED);
                         taskRepository.save(task);
                         log.info(
-                        "Task {} COMPLETED",
-                        task.getId());
+                                        "Task {} COMPLETED",
+                                        task.getId());
 
                 } catch (Exception e) {
 
@@ -115,9 +123,9 @@ public class TaskConsumer {
                                                 task.getId());
                         }
                         log.error(
-                                        "Task {} failed",
+                                        "Task {} failed: {}",
                                         task.getId(),
-                                        e);
+                                        e.getMessage());
                 }
         }
 
