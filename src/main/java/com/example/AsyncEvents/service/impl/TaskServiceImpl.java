@@ -3,6 +3,7 @@ package com.example.asyncevents.service.impl;
 import com.example.asyncevents.dto.request.CreateTaskRequest;
 import com.example.asyncevents.dto.response.DashboardResponse;
 import com.example.asyncevents.dto.response.FailedTaskResponse;
+import com.example.asyncevents.dto.response.TaskDetailsResponse;
 import com.example.asyncevents.dto.response.TaskResponse;
 import com.example.asyncevents.entity.Task;
 import com.example.asyncevents.enums.TaskStatus;
@@ -19,9 +20,8 @@ import com.example.asyncevents.event.TaskCreatedEvent;
 import com.example.asyncevents.producer.TaskProducer;
 import com.example.asyncevents.dto.response.TaskStatsResponse;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
-
-import com.example.asyncevents.dto.response.FailedTaskResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -122,9 +122,14 @@ public class TaskServiceImpl implements TaskService {
 
                 if (totalTasks > 0) {
 
-                        successRate = (completedTasks * 100.0) / totalTasks;
+                        // successRate = (completedTasks * 100.0) / totalTasks;
 
-                        failureRate = (failedTasks * 100.0) / totalTasks;
+                        // failureRate = (failedTasks * 100.0) / totalTasks;
+                        successRate = Math.round(
+                                        (completedTasks * 100.0 / totalTasks) * 100) / 100.0;
+
+                        failureRate = Math.round(
+                                        (failedTasks * 100.0 / totalTasks) * 100) / 100.0;
                 }
 
                 return new DashboardResponse(
@@ -135,5 +140,22 @@ public class TaskServiceImpl implements TaskService {
                                 processingTasks,
                                 successRate,
                                 failureRate);
+        }
+
+        @Override
+        public TaskDetailsResponse getTaskById(UUID id) {
+
+                Task task = taskRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "Task not found"));
+
+                return new TaskDetailsResponse(
+                                task.getId(),
+                                task.getType(),
+                                task.getPayload(),
+                                task.getStatus(),
+                                task.getRetryCount(),
+                                task.getCreatedAt(),
+                                task.getUpdatedAt());
         }
 }

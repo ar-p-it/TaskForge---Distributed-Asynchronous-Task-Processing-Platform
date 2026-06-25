@@ -4,10 +4,11 @@ import com.example.asyncevents.dto.request.CreateTaskRequest;
 import com.example.asyncevents.dto.response.TaskResponse;
 import com.example.asyncevents.dto.response.TaskStatsResponse;
 import java.util.List;
+import java.util.UUID;
 
 import com.example.asyncevents.dto.response.DashboardResponse;
 import com.example.asyncevents.dto.response.FailedTaskResponse;
-
+import com.example.asyncevents.dto.response.TaskDetailsResponse;
 public interface TaskService {
 
     TaskResponse createTask(CreateTaskRequest request);
@@ -17,4 +18,6 @@ public interface TaskService {
     TaskStatsResponse getTaskStats();
 
     DashboardResponse getDashboard();
+
+    TaskDetailsResponse getTaskById(UUID id);
 }
