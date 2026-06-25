@@ -13,5 +13,16 @@ public class ThirdPartyApiService {
                 "Calling external API with payload: {}",
                 payload
         );
+
+        if (payload.equalsIgnoreCase("fail")) {
+
+            throw new RuntimeException(
+                    "Third Party API Failed"
+            );
+        }
+
+        log.info(
+                "Third Party API Success"
+        );
     }
 }
