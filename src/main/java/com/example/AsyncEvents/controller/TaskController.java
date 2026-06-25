@@ -1,6 +1,7 @@
 package com.example.asyncevents.controller;
 
 import com.example.asyncevents.dto.request.CreateTaskRequest;
+import com.example.asyncevents.dto.response.DashboardResponse;
 import com.example.asyncevents.dto.response.FailedTaskResponse;
 import com.example.asyncevents.dto.response.TaskResponse;
 import com.example.asyncevents.service.TaskService;
@@ -44,5 +45,12 @@ public class TaskController {
 
         return ResponseEntity.ok(
                 taskService.getFailedTasks());
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<DashboardResponse> getDashboard() {
+
+        return ResponseEntity.ok(
+                taskService.getDashboard());
     }
 }

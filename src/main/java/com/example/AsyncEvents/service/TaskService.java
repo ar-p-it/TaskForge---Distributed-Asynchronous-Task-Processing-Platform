@@ -4,6 +4,8 @@ import com.example.asyncevents.dto.request.CreateTaskRequest;
 import com.example.asyncevents.dto.response.TaskResponse;
 import com.example.asyncevents.dto.response.TaskStatsResponse;
 import java.util.List;
+
+import com.example.asyncevents.dto.response.DashboardResponse;
 import com.example.asyncevents.dto.response.FailedTaskResponse;
 
 public interface TaskService {
@@ -13,4 +15,6 @@ public interface TaskService {
     List<FailedTaskResponse> getFailedTasks();
 
     TaskStatsResponse getTaskStats();
+
+    DashboardResponse getDashboard();
 }
