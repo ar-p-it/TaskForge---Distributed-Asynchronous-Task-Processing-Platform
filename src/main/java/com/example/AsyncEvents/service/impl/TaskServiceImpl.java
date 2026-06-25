@@ -1,6 +1,7 @@
 package com.example.asyncevents.service.impl;
 
 import com.example.asyncevents.dto.request.CreateTaskRequest;
+import com.example.asyncevents.dto.response.FailedTaskResponse;
 import com.example.asyncevents.dto.response.TaskResponse;
 import com.example.asyncevents.entity.Task;
 import com.example.asyncevents.enums.TaskStatus;
@@ -10,20 +11,25 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-
+import java.util.stream.Collectors;
 
 // day 2 
 import com.example.asyncevents.event.TaskCreatedEvent;
 import com.example.asyncevents.producer.TaskProducer;
 import com.example.asyncevents.dto.response.TaskStatsResponse;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.example.asyncevents.dto.response.FailedTaskResponse;
+
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
     // private final TaskRepository taskRepository;
     // day 2chnages
-private final TaskRepository taskRepository;
-private final TaskProducer taskProducer;
+    private final TaskRepository taskRepository;
+    private final TaskProducer taskProducer;
 
     @Override
     public TaskResponse createTask(CreateTaskRequest request) {
@@ -40,45 +46,56 @@ private final TaskProducer taskProducer;
         // Task savedTask = taskRepository.save(task);
 
         // return TaskResponse.builder()
-        //         .id(savedTask.getId())
-        //         .type(savedTask.getType())
-        //         .status(savedTask.getStatus())
-        //         .build();
+        // .id(savedTask.getId())
+        // .type(savedTask.getType())
+        // .status(savedTask.getStatus())
+        // .build();
         // day 2
         Task savedTask = taskRepository.save(task);
 
-taskProducer.publishTaskCreated(
-        new TaskCreatedEvent(savedTask.getId())
-);
+        taskProducer.publishTaskCreated(
+                new TaskCreatedEvent(savedTask.getId()));
 
-return TaskResponse.builder()
-        .id(savedTask.getId())
-        .type(savedTask.getType())
-        .status(savedTask.getStatus())
-        .build();
+        return TaskResponse.builder()
+                .id(savedTask.getId())
+                .type(savedTask.getType())
+                .status(savedTask.getStatus())
+                .build();
     }
 
-@Override
-public TaskStatsResponse getTaskStats() {
+    @Override
+    public TaskStatsResponse getTaskStats() {
 
-    long pending = taskRepository.countByStatus(
-            TaskStatus.PENDING);
+        long pending = taskRepository.countByStatus(
+                TaskStatus.PENDING);
 
-    long processing = taskRepository.countByStatus(
-            TaskStatus.PROCESSING);
+        long processing = taskRepository.countByStatus(
+                TaskStatus.PROCESSING);
 
-    long completed = taskRepository.countByStatus(
-            TaskStatus.COMPLETED);
+        long completed = taskRepository.countByStatus(
+                TaskStatus.COMPLETED);
 
-    long failed = taskRepository.countByStatus(
-            TaskStatus.FAILED);
+        long failed = taskRepository.countByStatus(
+                TaskStatus.FAILED);
 
-    return new TaskStatsResponse(
-            pending,
-            processing,
-            completed,
-            failed
-    );
-}
+        return new TaskStatsResponse(
+                pending,
+                processing,
+                completed,
+                failed);
+    }
 
+    @Override
+    public List<FailedTaskResponse> getFailedTasks() {
+
+        return taskRepository.findByStatus(
+                TaskStatus.FAILED)
+                .stream()
+                .map(task -> new FailedTaskResponse(
+                        task.getId(),
+                        task.getType(),
+                        task.getStatus(),
+                        task.getRetryCount()))
+                .collect(Collectors.toList());
+    }
 }

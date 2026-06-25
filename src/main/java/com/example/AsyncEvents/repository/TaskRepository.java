@@ -6,10 +6,11 @@ import com.example.asyncevents.entity.Task;
 
 import java.util.UUID;
 import com.example.asyncevents.enums.TaskStatus;
-
+import java.util.List;
 public interface TaskRepository
-        extends JpaRepository<Task, UUID> {
+                extends JpaRepository<Task, UUID> {
 
-	long countByStatus(TaskStatus pending);
+        long countByStatus(TaskStatus pending);
+
+        List<Task> findByStatus(TaskStatus status);
 }
-
