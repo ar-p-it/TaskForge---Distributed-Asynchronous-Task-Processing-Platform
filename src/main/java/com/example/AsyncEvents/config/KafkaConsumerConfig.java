@@ -1,6 +1,7 @@
 package com.example.asyncevents.config;
 
-import com.example.asyncevents.event.TaskCreatedEvent;
+// import com.example.asyncevents.event.TaskCreatedEvent;
+import com.example.task_contracts.event.TaskCreatedEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;

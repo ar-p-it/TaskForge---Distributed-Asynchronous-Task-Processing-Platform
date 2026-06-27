@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 // day 2 
-import com.example.asyncevents.event.TaskCreatedEvent;
+// import com.example.asyncevents.event.TaskCreatedEvent;
+import com.example.task_contracts.event.TaskCreatedEvent;
 import com.example.asyncevents.producer.TaskProducer;
 import com.example.asyncevents.dto.response.TaskStatsResponse;
 import java.util.List;

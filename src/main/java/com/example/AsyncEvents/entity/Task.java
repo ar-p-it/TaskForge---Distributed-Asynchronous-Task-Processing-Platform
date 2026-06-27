@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.example.asyncevents.enums.TaskStatus;
-import com.example.asyncevents.enums.TaskType;
+// import com.example.asyncevents.enums.TaskType;
+import com.example.task_contracts.enums.TaskType;
 
 @Entity
 @Getter

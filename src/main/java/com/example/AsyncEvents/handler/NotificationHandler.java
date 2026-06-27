@@ -1,7 +1,8 @@
 package com.example.asyncevents.handler;
 
 import com.example.asyncevents.entity.Task;
-import com.example.asyncevents.enums.TaskType;
+// import com.example.asyncevents.enums.TaskType;
+import com.example.task_contracts.enums.TaskType;
 import com.example.asyncevents.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

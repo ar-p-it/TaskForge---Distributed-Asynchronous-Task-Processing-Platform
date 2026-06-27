@@ -1,7 +1,8 @@
 package com.example.asyncevents.dto.response;
 
 import com.example.asyncevents.enums.TaskStatus;
-import com.example.asyncevents.enums.TaskType;
+// import com.example.asyncevents.enums.TaskType;
+import com.example.task_contracts.enums.TaskType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

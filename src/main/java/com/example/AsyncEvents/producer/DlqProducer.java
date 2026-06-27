@@ -1,6 +1,7 @@
 package com.example.asyncevents.producer;
 
-import com.example.asyncevents.event.TaskCreatedEvent;
+// import com.example.asyncevents.event.TaskCreatedEvent;
+import com.example.task_contracts.event.TaskCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

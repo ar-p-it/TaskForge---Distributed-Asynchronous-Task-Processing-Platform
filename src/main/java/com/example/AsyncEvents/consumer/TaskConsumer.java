@@ -2,7 +2,8 @@ package com.example.asyncevents.consumer;
 
 import com.example.asyncevents.entity.Task;
 import com.example.asyncevents.enums.TaskStatus;
-import com.example.asyncevents.event.TaskCreatedEvent;
+// import com.example.asyncevents.event.TaskCreatedEvent;
+import com.example.task_contracts.event.TaskCreatedEvent;
 import com.example.asyncevents.handler.TaskHandler;
 import com.example.asyncevents.handler.TaskHandlerFactory;
 import com.example.asyncevents.producer.DlqProducer;
