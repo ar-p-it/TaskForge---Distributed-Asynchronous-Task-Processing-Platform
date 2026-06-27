@@ -1,0 +1,96 @@
+# Day 18 - Docker Compose
+# Starts the complete TaskForge platform:
+# PostgreSQL + Kafka + API + Worker
+
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: postgres
+
+    environment:
+      POSTGRES_DB: asyncevents
+      POSTGRES_USER: a_home
+
+      # Day 18 - Docker Compose
+      # Allow passwordless login for local development
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+
+    ports:
+      - "9092:9092"
+
+    environment:
+      # Day 18 - Kafka KRaft Mode
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      # Kafka listens on these ports
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+
+      # Docker containers connect using service name "kafka"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+
+      # Controller configuration
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+
+      # Single broker setup
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: task-api
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - postgres
+      - kafka
+
+    environment:
+      # Day 18 - Docker Compose
+      # Inside Docker, services communicate using service names
+      DB_URL: jdbc:postgresql://postgres:5432/asyncevents
+      DB_USERNAME: a_home
+      DB_PASSWORD:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  worker:
+    build:
+      context: ./worker-service
+      dockerfile: Dockerfile
+
+    container_name: worker-service
+
+    ports:
+      - "8081:8081"
+
+    depends_on:
+      - postgres
+      - kafka
+
+    environment:
+      # Day 18 - Docker Compose
+      DB_URL: jdbc:postgresql://postgres:5432/asyncevents
+      DB_USERNAME: a_home
+      DB_PASSWORD:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+# Persistent PostgreSQL Storage
+volumes:
+  postgres_data:
