@@ -10,6 +10,8 @@ import com.example.asyncevents.enums.TaskStatus;
 import com.example.asyncevents.repository.TaskRepository;
 import com.example.asyncevents.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
@@ -35,6 +38,7 @@ public class TaskServiceImpl implements TaskService {
 
         @Override
         public TaskResponse createTask(CreateTaskRequest request) {
+                log.info("Received task creation request. Type={}", request.getType());
 
                 Task task = Task.builder()
                                 .type(request.getType())
@@ -54,10 +58,17 @@ public class TaskServiceImpl implements TaskService {
                 // .build();
                 // day 2
                 Task savedTask = taskRepository.save(task);
+                log.info("Task {} saved with status {}",
+                                savedTask.getId(),
+                                savedTask.getStatus());
+
+                log.info("Publishing TaskCreatedEvent for task {}",
+                                savedTask.getId());
 
                 taskProducer.publishTaskCreated(
                                 new TaskCreatedEvent(savedTask.getId()));
-
+                log.info("Task {} handed off for asynchronous processing",
+                                savedTask.getId());
                 return TaskResponse.builder()
                                 .id(savedTask.getId())
                                 .type(savedTask.getType())

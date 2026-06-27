@@ -208,31 +208,56 @@ This project demonstrates:
 
 
 
-                Client
-                   │
-                   ▼
-            Task Service
-                   │
-                   ▼
-              PostgreSQL
-                   │
-                   ▼
-                 Kafka
-      ┌────────────┼────────────┐
-      ▼            ▼            ▼
- Notification   Data Proc    API Worker
-    Worker       Worker
-      │            │            │
-      ▼            ▼            ▼
-   Email        Reports      GitHub
-   SMS          Analytics    OpenAI
+                                        +--------------------+
+                                        |       Client       |
+                                        +---------+----------+
+                                                  |
+                                             HTTP Request
+                                                  |
+                                                  v
+                               +----------------------------------+
+                               |       AsyncEvents Service        |
+                               |----------------------------------|
+                               | Controller                       |
+                               | TaskService                      |
+                               | TaskRepository                   |
+                               | PostgreSQL                       |
+                               | Kafka Producer                   |
+                               +----------------+-----------------+
+                                                |
+                                      TaskCreatedEvent
+                                                |
+                                                v
+                                   +-------------------------+
+                                   |          Kafka          |
+                                   |-------------------------|
+                                   | task-created-topic      |
+                                   | task-dlq-topic          |
+                                   +------------+------------+
+                                                |
+                                                |
+                                                v
+                              +-----------------------------------+
+                              |        Worker Service             |
+                              |-----------------------------------|
+                              | Kafka Consumer                    |
+                              | TaskRepository                    |
+                              | TaskHandlerFactory                |
+                              | EmailTaskHandler                  |
+                              | DataProcessingTaskHandler         |
+                              | ThirdPartyApiTaskHandler          |
+                              | Retry Logic                       |
+                              | DLQ Producer                      |
+                              | PostgreSQL                        |
+                              +----------------+------------------+
+                                               |
+                                               |
+                              +----------------+----------------+
+                              |                |                |
+                              v                v                v
+                     Email Service     Data Processing    Third Party API
 
-                   │
-                   ▼
-                 Redis
-            (Rate Limits)
 
-                   │
-                   ▼
-              Kubernetes
-               (Scaling)
+
+
+                     ![alt text](image.png)
